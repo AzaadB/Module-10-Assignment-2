@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="fontAwesome/css/all.css" />
+  <title>The Recipe Book</title>
+</head>
+
+<body class="body-recipe" onload="getRecipe()">
+  <div class="header">
+    <a href="#" id="back">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <img src="images/logo-text.png" />
+  </div>
+  <div id="recipe">
+    <div class="recipe-details" id="output">
+    </div>
+  </div>
+  <script>
+
+    const id = getId();
+    //creating a function that will be responsible for fetching the recipe from the api//
+    function getRecipe() {
+      //pass in the rootPath url in a varible(line 5)
+      const rootPath = "https://mysite.itvarsity.org/api/recipe-book/";
+      const fullPath = rootPath + "get-recipes/?id=" + id;
+      //The fullPath variable is combonation of the rootPath, the api call and the id//
+      fetch(fullPath)
+        .then(function (response) {
+          //inside here we return a json response//
+          return response.json();
+        }).then(function (data) {
+          //Fixing the back button//
+          document.getElementById("back").href = "list-recipes.html?category=" + data[0].category;
+          var output = "";
+          //creating an output template//
+          output += `
+          <img src="${rootPath}uploads/${data[0].image}"/>
+          <h1>${data[0].title}</h1>
+          <div class="recipe-details-ingredients">
+            <h2>Ingredients</h2>
+            <ul>
+              ${data[0].ingredients}
+              </ul>
+            </div>
+            <div class="recipe-details-steps">
+              <h2>Method</h2>
+              <ol>${data[0].method}</ol>
+          `;
+          document.getElementById("output").innerHTML = output;
+        })
+    }
+    /*Creating a function to get the ids*/
+    function getId() {
+      //Storing the urls in a variable//
+      const url = window.location.href;
+      //The pos varible holds the position of the = to sign//
+      const pos = url.search("=");
+      //creating a category variable//
+      const id = url.slice(pos + 1);
+
+      return id;
+    }
+  </script>
+</body>
+
+</html>
